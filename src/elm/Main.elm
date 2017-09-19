@@ -73,20 +73,21 @@ view model =
 homePage : Html msg
 homePage =
     div []
-        [ banner
-        , divider
-        , div [ class "container center" ]
-            [ img [ src "static/img/material.png" ] [] ]
+        [ header
         ]
 
 
-banner : Html msg
-banner =
-    div []
-        [ section []
-            [ div [ class "row" ]
-                [ div [ class "col s12" ]
-                    [ h2 [ class "grey-text text-darken-4 center" ] [ text "Hello World!" ] ]
+header : Html msg
+header =
+    div [ class "navbar-fixed scrollspy" ]
+        [ nav [ class "orange darken-4" ]
+            [ div [ class "nav-wrapper container" ]
+                [ a [ href "#", class "brand-logo" ] [ text "Randomizer" ]
+                , ul [ id "nav-mobile", class "right hide-on-med-and-down" ]
+                    [ li [] [ a [] [ text "Tag" ] ]
+                    , li [] [ a [] [ text "Joke" ] ]
+                    , li [] [ a [] [ text "GIF" ] ]
+                    ]
                 ]
             ]
         ]
