@@ -3,6 +3,8 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Http
+import Json.Decode as Decode
 import Random
 
 
@@ -33,17 +35,21 @@ subscriptions model =
 
 
 type alias Model =
-    { tags : List Int }
+    { tags : List Int
+    , jokes : List String
+    }
 
 
 model : Model
 model =
-    { tags = [] }
+    { tags = []
+    , jokes = []
+    }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model [], Cmd.none )
+    ( Model [] [], Cmd.none )
 
 
 
@@ -55,6 +61,7 @@ type Msg
     | FindJoke
     | FindGif
     | NewTag Int
+    | NewJoke (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -67,10 +74,38 @@ update msg model =
             { model | tags = tag :: model.tags } ! []
 
         FindJoke ->
+            ( model, getRandomJoke )
+
+        NewJoke (Ok joke) ->
+            ( { model | jokes = joke :: model.jokes }, Cmd.none )
+
+        NewJoke (Err error) ->
+            -- TODO: Show error in view
             model ! []
 
         FindGif ->
             model ! []
+
+
+
+-- REQUESTS
+
+
+getRandomJoke : Cmd Msg
+getRandomJoke =
+    let
+        url =
+            "https://api.icndb.com/jokes/random"
+
+        request =
+            Http.get url decodeJoke
+    in
+    Http.send NewJoke request
+
+
+decodeJoke : Decode.Decoder String
+decodeJoke =
+    Decode.at [ "value", "joke" ] Decode.string
 
 
 
@@ -82,6 +117,7 @@ view model =
     div []
         [ header
         , tagSection model.tags
+        , divider
         ]
 
 
@@ -120,6 +156,18 @@ tagSection tags =
 toTag : String -> Html Msg
 toTag content =
     div [ class "chip" ] [ text content ]
+
+
+toJokeCard : String -> Html Msg
+toJokeCard content =
+    div [ class "row container" ]
+        [ div [ class "col s8 offset-s2" ]
+            [ div [ class "card blue-grey darken-1" ]
+                [ div [ class "card-content white-text center" ]
+                    [ p [] [ text content ] ]
+                ]
+            ]
+        ]
 
 
 {-| Provides an Html divider.
