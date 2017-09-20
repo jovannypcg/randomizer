@@ -2,6 +2,7 @@ module Main exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
+import Html.Events exposing (onClick)
 
 
 -- APP
@@ -49,13 +50,21 @@ init =
 
 
 type Msg
-    = NoOp
+    = GenerateTag
+    | FindJoke
+    | FindGif
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        NoOp ->
+        GenerateTag ->
+            model ! []
+
+        FindJoke ->
+            Model ! []
+
+        FindGif ->
             model ! []
 
 
@@ -70,23 +79,23 @@ view model =
         ]
 
 
-homePage : Html msg
+homePage : Html Msg
 homePage =
     div []
         [ header
         ]
 
 
-header : Html msg
+header : Html Msg
 header =
     div [ class "navbar-fixed scrollspy" ]
         [ nav [ class "orange darken-4" ]
             [ div [ class "nav-wrapper container" ]
                 [ a [ href "#", class "brand-logo" ] [ text "Randomizer" ]
                 , ul [ id "nav-mobile", class "right hide-on-med-and-down" ]
-                    [ li [] [ a [] [ text "Tag" ] ]
-                    , li [] [ a [] [ text "Joke" ] ]
-                    , li [] [ a [] [ text "GIF" ] ]
+                    [ li [] [ a [ onClick GenerateTag ] [ text "Tag" ] ]
+                    , li [] [ a [ onClick FindJoke ] [ text "Joke" ] ]
+                    , li [] [ a [ onClick FindGif ] [ text "GIF" ] ]
                     ]
                 ]
             ]
