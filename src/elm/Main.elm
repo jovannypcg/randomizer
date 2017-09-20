@@ -118,6 +118,7 @@ view model =
         [ header
         , tagSection model.tags
         , divider
+        , jokeSection model.jokes
         ]
 
 
@@ -137,7 +138,7 @@ header =
         ]
 
 
-{-| Provides tags view
+{-| Provides tags view.
 -}
 tagSection : List Int -> Html Msg
 tagSection tags =
@@ -158,8 +159,20 @@ toTag content =
     div [ class "chip" ] [ text content ]
 
 
-toJokeCard : String -> Html Msg
-toJokeCard content =
+{-| Provides jokes view.
+-}
+jokeSection : List String -> Html Msg
+jokeSection jokes =
+    section []
+        [ h4 [ class "center" ] [ text "Jokes" ]
+        , div [] (List.map toCard <| jokes)
+        ]
+
+
+{-| Displays text in form of a card by Materialize.
+-}
+toCard : String -> Html Msg
+toCard content =
     div [ class "row container" ]
         [ div [ class "col s8 offset-s2" ]
             [ div [ class "card blue-grey darken-1" ]
