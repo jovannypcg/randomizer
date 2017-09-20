@@ -14,7 +14,7 @@ import Random
 main : Program Never Model Msg
 main =
     Html.program
-        { init = init
+        { init = init "elm"
         , subscriptions = subscriptions
         , view = view
         , update = update
@@ -37,6 +37,8 @@ subscriptions model =
 type alias Model =
     { tags : List Int
     , jokes : List String
+    , gifUrl : String
+    , gifTopic : String
     }
 
 
@@ -44,12 +46,14 @@ model : Model
 model =
     { tags = []
     , jokes = []
+    , gifUrl = ""
+    , gifTopic = ""
     }
 
 
-init : ( Model, Cmd Msg )
-init =
-    ( Model [] [], Cmd.none )
+init : String -> ( Model, Cmd Msg )
+init gifTopic =
+    ( Model [] [] "" gifTopic, Cmd.none )
 
 
 
@@ -62,6 +66,7 @@ type Msg
     | FindGif
     | NewTag Int
     | NewJoke (Result Http.Error String)
+    | NewGif (Result Http.Error String)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -84,6 +89,12 @@ update msg model =
             model ! []
 
         FindGif ->
+            model ! [ getRandomGif model.gifTopic ]
+
+        NewGif (Ok url) ->
+            { model | gifUrl = url } ! []
+
+        NewGif (Err error) ->
             model ! []
 
 
@@ -106,6 +117,23 @@ getRandomJoke =
 decodeJoke : Decode.Decoder String
 decodeJoke =
     Decode.at [ "value", "joke" ] Decode.string
+
+
+getRandomGif : String -> Cmd Msg
+getRandomGif topic =
+    let
+        url =
+            "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" ++ topic
+
+        request =
+            Http.get url decodeGif
+    in
+    Http.send NewGif request
+
+
+decodeGif : Decode.Decoder String
+decodeGif =
+    Decode.at [ "data", "image_url" ] Decode.string
 
 
 
