@@ -14,7 +14,7 @@ import Random
 main : Program Never Model Msg
 main =
     Html.program
-        { init = init "elm"
+        { init = init "rock"
         , subscriptions = subscriptions
         , view = view
         , update = update
@@ -146,6 +146,8 @@ view model =
         [ header
         , tagSection model.tags
         , divider
+        , gifSection model.gifUrl
+        , divider
         , jokeSection model.jokes
         ]
 
@@ -208,6 +210,14 @@ toCard content =
                     [ p [] [ text content ] ]
                 ]
             ]
+        ]
+
+
+gifSection : String -> Html Msg
+gifSection gif =
+    section [ class "row container" ]
+        [ div [ class "col s3 center" ] [ h4 [] [ text "GIF" ] ]
+        , div [ class "col s9 center" ] [ img [ src gif ] [] ]
         ]
 
 
