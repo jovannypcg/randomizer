@@ -3,6 +3,7 @@ module Main exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
+import Random
 
 
 -- APP
@@ -32,17 +33,17 @@ subscriptions model =
 
 
 type alias Model =
-    {}
+    { tags : List Int }
 
 
 model : Model
 model =
-    {}
+    { tags = [] }
 
 
 init : ( Model, Cmd Msg )
 init =
-    ( Model, Cmd.none )
+    ( Model [], Cmd.none )
 
 
 
@@ -53,16 +54,20 @@ type Msg
     = GenerateTag
     | FindJoke
     | FindGif
+    | NewTag Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         GenerateTag ->
-            model ! []
+            ( model, Random.generate NewTag (Random.int 0 100) )
+
+        NewTag tag ->
+            { model | tags = tag :: model.tags } ! []
 
         FindJoke ->
-            Model ! []
+            model ! []
 
         FindGif ->
             model ! []
@@ -75,14 +80,8 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ homePage
-        ]
-
-
-homePage : Html Msg
-homePage =
-    div []
         [ header
+        , tagSection model.tags
         ]
 
 
@@ -102,7 +101,28 @@ header =
         ]
 
 
-{-| Provides an Html divider
+{-| Provides tags view
+-}
+tagSection : List Int -> Html Msg
+tagSection tags =
+    section [ class "row container" ]
+        [ div [ class "col s3 center" ] [ h4 [] [ text "Tags" ] ]
+        , div [ class "col s9" ]
+            (tags
+                |> List.map toString
+                |> List.map toTag
+            )
+        ]
+
+
+{-| Creates a tag using "chip" class by Materialize.
+-}
+toTag : String -> Html Msg
+toTag content =
+    div [ class "chip" ] [ text content ]
+
+
+{-| Provides an Html divider.
 -}
 divider : Html msg
 divider =
