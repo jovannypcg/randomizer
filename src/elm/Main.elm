@@ -75,13 +75,6 @@ update msg model =
 view : Model -> Html Msg
 view model =
     div []
-        [ homePage
-        ]
-
-
-homePage : Html Msg
-homePage =
-    div []
         [ header
         ]
 
